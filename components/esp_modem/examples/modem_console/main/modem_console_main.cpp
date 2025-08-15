@@ -28,6 +28,7 @@
 #include "esp_log.h"
 #include "console_helper.hpp"
 #include "my_module_dce.hpp"
+#include "esp_netif_ppp.h"
 
 #if defined(CONFIG_EXAMPLE_FLOW_CONTROL_NONE)
 #define EXAMPLE_FLOW_CONTROL ESP_MODEM_FLOW_CONTROL_NONE
@@ -113,12 +114,13 @@ extern "C" void app_main(void)
     esp_netif_config_t ppp_netif_config = ESP_NETIF_DEFAULT_PPP();
     esp_netif_t *esp_netif = esp_netif_new(&ppp_netif_config);
     assert(esp_netif);
-
+    esp_netif_ppp_set_auth(esp_netif, NETIF_PPP_AUTHTYPE_PAP, "esp32", "test");
 #if defined(CONFIG_EXAMPLE_SERIAL_CONFIG_UART)
     esp_modem_dte_config_t dte_config = ESP_MODEM_DTE_DEFAULT_CONFIG();
     /* setup UART specific configuration based on kconfig options */
     dte_config.uart_config.tx_io_num = CONFIG_EXAMPLE_MODEM_UART_TX_PIN;
     dte_config.uart_config.rx_io_num = CONFIG_EXAMPLE_MODEM_UART_RX_PIN;
+    dte_config.uart_config.port_num = UART_NUM_0;
     dte_config.uart_config.rts_io_num = CONFIG_EXAMPLE_MODEM_UART_RTS_PIN;
     dte_config.uart_config.cts_io_num = CONFIG_EXAMPLE_MODEM_UART_CTS_PIN;
     dte_config.uart_config.flow_control = EXAMPLE_FLOW_CONTROL;

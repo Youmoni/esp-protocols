@@ -1,0 +1,13 @@
+{
+    "name": "esp_modem",
+    "version": "1.1.0",
+    "description": "esp_modem",
+    "frameworks": "espidf",
+    "platforms": "*",
+    "build": {
+	"srcFilter": "+src/<*> -src/<*linux*>",
+	"flags": [
+	    "-I private_include"
+	]
+    }
+}

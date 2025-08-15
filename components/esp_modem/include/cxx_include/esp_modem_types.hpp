@@ -55,7 +55,7 @@ typedef std::function<command_result(uint8_t *data, size_t len)> got_line_cb;
  */
 struct PdpContext {
     explicit PdpContext(std::string apn) : apn(std::move(apn)) {}
-    size_t context_id = 1;
+    size_t context_id = 0;
     std::string protocol_type = "IP";
     std::string apn;
 };

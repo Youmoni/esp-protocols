@@ -53,9 +53,9 @@ public:
         if (set_echo(false) != command_result::OK) {
             return false;
         }
-        if (set_pdp_context(*pdp) != command_result::OK) {
-            return false;
-        }
+        //if (set_pdp_context(*pdp) != command_result::OK) {
+        //    return false;
+        //}
         return true;
     }
 

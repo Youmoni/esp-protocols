@@ -155,10 +155,11 @@ bool DTE::exit_cmux()
         return false;
     }
     if (!cmux_term->deinit()) {
-        return false;
+        ESP_LOGW("esp_modem_dte", "exit_cmux(), deinit failed");
     }
     exit_cmux_internal();
     cmux_term.reset();
+    cmux_term = nullptr;
     return true;
 }
 
