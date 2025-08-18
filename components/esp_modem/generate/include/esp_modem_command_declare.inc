@@ -123,15 +123,15 @@ ESP_MODEM_DECLARE_DCE_COMMAND(get_imei, command_result, STR_OUT(imei))
  * @brief Reads the ICCID number
  * @param[out] iccid Module's ICCID number
  * @return OK, FAIL or TIMEOUT
- */ \
-ESP_MODEM_DECLARE_DCE_COMMAND(get_iccid, command_result, 1, STRING_OUT(p1, iccid))
+ */
+ESP_MODEM_DECLARE_DCE_COMMAND(get_iccid, command_result, STR_OUT(iccid))
 
 /**
  * @brief Reads the RMC string
  * @param[out] rmc GPS's RMC string
  * @return OK, FAIL or TIMEOUT
- */ \
-ESP_MODEM_DECLARE_DCE_COMMAND(get_rmc, command_result, 1, STRING_OUT(p1, rmc))
+ */
+ESP_MODEM_DECLARE_DCE_COMMAND(get_rmc, command_result, STR_OUT(rmc))
 
 /**
  * @brief Reads the module name
