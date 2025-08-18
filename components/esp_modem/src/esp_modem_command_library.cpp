@@ -303,7 +303,7 @@ command_result set_data_mode(CommandableIf *t)
 command_result set_data_mode_alt(CommandableIf *t)
 {
     ESP_LOGV(TAG, "%s", __func__);
-    return generic_command(t, "ATD*99##\r", "CONNECT", "ERROR", 5000);
+    return generic_command(t, "ATD*99***1#\r", "CONNECT", "ERROR", 5000);
 }
 
 command_result resume_data_mode(CommandableIf *t)
@@ -317,7 +317,7 @@ command_result set_command_mode(CommandableIf *t)
     ESP_LOGV(TAG, "%s", __func__);
     const auto pass = std::list<std::string_view>({"NO CARRIER", "OK"});
     const auto fail = std::list<std::string_view>({"ERROR"});
-    return generic_command(t, "+++", pass, fail, 5000);
+    return generic_command(t, "~+++", pass, fail, 5000);
 }
 
 command_result get_imsi(CommandableIf *t, std::string &imsi_number)
@@ -330,6 +330,44 @@ command_result get_imei(CommandableIf *t, std::string &out)
 {
     ESP_LOGV(TAG, "%s", __func__);
     return generic_get_string(t, "AT+CGSN\r", out, 5000);
+}
+
+command_result get_iccid(CommandableIf *t, std::string &iccid)
+{
+    ESP_LOGV(TAG, "%s", __func__ );
+    std::string out;
+    auto ret = generic_get_string(t, "AT+CCID\r", out, 5000);
+    if (ret != command_result::OK) {
+        return ret;
+    }
+
+    constexpr std::string_view pattern = "+CCID: ";
+    constexpr int iccid_pos = pattern.size();
+    if (out.find(pattern) == std::string::npos) {
+        return command_result::FAIL;
+    }
+
+    iccid = out.data() + iccid_pos;
+    return command_result::OK;
+}
+
+command_result get_rmc(CommandableIf *t, std::string &rmc)
+{
+    ESP_LOGV(TAG, "%s", __func__ );
+    std::string out;
+    auto ret = generic_get_string(t, "AT+UGRMC?\r", out, 1000);
+    if (ret != command_result::OK) {
+        return ret;
+    }
+
+    constexpr std::string_view pattern = "+UGRMC: 1,";
+    constexpr int rmc_pos = pattern.size();
+    if (out.find(pattern) == std::string::npos) {
+        return command_result::FAIL;
+    }
+
+    rmc = out.data() + rmc_pos;
+    return command_result::OK;
 }
 
 command_result get_module_name(CommandableIf *t, std::string &out)
@@ -375,7 +413,7 @@ command_result send_sms(CommandableIf *t, const std::string &number, const std::
 command_result set_cmux(CommandableIf *t)
 {
     ESP_LOGV(TAG, "%s", __func__);
-    return generic_command_common(t, "AT+CMUX=0\r");
+    return generic_command_common(t, "AT+CMUX=0,0,,127\r");
 }
 
 command_result read_pin(CommandableIf *t, bool &pin_ok)
@@ -434,7 +472,7 @@ command_result get_signal_quality(CommandableIf *t, int &rssi, int &ber)
 {
     ESP_LOGV(TAG, "%s", __func__);
     std::string out;
-    auto ret = generic_get_string(t, "AT+CSQ\r", out);
+    auto ret = generic_get_string(t, "AT+CSQ\r", out, 1000);
     if (ret != command_result::OK) {
         return ret;
     }

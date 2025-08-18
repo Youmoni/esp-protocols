@@ -174,6 +174,7 @@ bool DTE::exit_cmux()
     const bool success = cmux_term->deinit();
     exit_cmux_internal();
     cmux_term.reset();
+    cmux_term = nullptr;
     return success;
 }
 
