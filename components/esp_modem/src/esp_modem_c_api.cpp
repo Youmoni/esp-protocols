@@ -286,7 +286,7 @@ extern "C" esp_err_t esp_modem_get_iccid(esp_modem_dce_t *dce_wrap, char *p_icci
     std::string iccid;
     auto ret = command_response_to_esp_err(dce_wrap->dce->get_iccid(iccid));
     if (ret == ESP_OK && !iccid.empty()) {
-        strlcpy(p_iccid, iccid.c_str(), ESP_MODEM_C_API_STR_MAX);
+        strlcpy(p_iccid, iccid.c_str(), CONFIG_ESP_MODEM_C_API_STR_MAX);
     }
     return ret;
 }
@@ -298,7 +298,7 @@ extern "C" esp_err_t esp_modem_get_rmc(esp_modem_dce_t *dce_wrap, char *p_rmc)
     std::string rmc;
     auto ret = command_response_to_esp_err(dce_wrap->dce->get_rmc(rmc));
     if (ret == ESP_OK && !rmc.empty()) {
-        strlcpy(p_rmc, rmc.c_str(), ESP_MODEM_C_API_STR_MAX);
+        strlcpy(p_rmc, rmc.c_str(), CONFIG_ESP_MODEM_C_API_STR_MAX);
     }
     return ret;
 }
