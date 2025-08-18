@@ -139,6 +139,18 @@ command_result get_imsi(CommandableIf *t, std::string &imsi);
  */
 command_result get_imei(CommandableIf *t, std::string &imei);
 /**
+ * @brief Reads the ICCID number
+ * @param[out] iccid Module's ICCID number
+ * @return OK, FAIL or TIMEOUT
+ */
+command_result get_iccid(CommandableIf *t, std::string &iccid);
+/**
+ * @brief Reads the RMC string
+ * @param[out] rmc GPS's RMC string
+ * @return OK, FAIL or TIMEOUT
+ */
+command_result get_rmc(CommandableIf *t, std::string &rmc);
+/**
  * @brief Reads the module name
  * @param[out] name module name
  * @return OK, FAIL or TIMEOUT
