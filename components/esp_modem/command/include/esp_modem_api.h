@@ -119,6 +119,18 @@ esp_err_t esp_modem_get_imsi(esp_modem_dce_t *dce, char *imsi);
  */
 esp_err_t esp_modem_get_imei(esp_modem_dce_t *dce, char *imei);
 /**
+ * @brief Reads the ICCID number
+ * @param[out] iccid Module's ICCID number
+ * @return OK, FAIL or TIMEOUT
+ */
+esp_err_t esp_modem_get_iccid(esp_modem_dce_t *dce, char *iccid);
+/**
+ * @brief Reads the RMC string
+ * @param[out] rmc GPS's RMC string
+ * @return OK, FAIL or TIMEOUT
+ */
+esp_err_t esp_modem_get_rmc(esp_modem_dce_t *dce, char *rmc);
+/**
  * @brief Reads the module name
  * @param[out] name module name
  * @return OK, FAIL or TIMEOUT
