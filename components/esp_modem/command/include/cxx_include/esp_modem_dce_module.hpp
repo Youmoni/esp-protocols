@@ -208,6 +208,18 @@ public:
      * @param[out] imei Module's IMEI number
      * @return OK, FAIL or TIMEOUT
      */
+    virtual command_result get_iccid(std::string &iccid);
+    /**
+     * @brief Reads the ICCID number
+     * @param[out] iccid Module's ICCID number
+     * @return OK, FAIL or TIMEOUT
+     */
+    virtual command_result get_rmc(std::string &rmc);
+    /**
+     * @brief Reads the RMC string
+     * @param[out] rmc GPS's RMC string
+     * @return OK, FAIL or TIMEOUT
+     */
     virtual command_result get_imei(std::string &imei);
     /**
      * @brief Reads the module name
