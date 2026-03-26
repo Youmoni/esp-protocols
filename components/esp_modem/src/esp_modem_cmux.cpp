@@ -432,6 +432,7 @@ bool CMux::deinit()
 
 bool CMux::init()
 {
+    usleep(10'000); // Needed for Sara R4
     frame_header_offset = 0;
     state = cmux_state::INIT;
     term->set_read_cb([this](uint8_t *data, size_t len) {
