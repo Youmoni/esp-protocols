@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2015-2023 Espressif Systems (Shanghai) CO LTD
+ * SPDX-FileCopyrightText: 2015-2025 Espressif Systems (Shanghai) CO LTD
  *
  * SPDX-License-Identifier: Apache-2.0
  */
@@ -14,11 +14,19 @@
 #include "freertos/FreeRTOS.h"
 #include "esp_err.h"
 #include "esp_event.h"
+#include "esp_idf_version.h"
 #include <sys/socket.h>
 #include "esp_transport_ws.h"
 
 #ifdef __cplusplus
 extern "C" {
+#endif
+
+#if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(6, 0, 0)
+// Features supported in 6.0.0
+#define WS_TRANSPORT_HEADER_CALLBACK_SUPPORT    1
+#else
+#define WS_TRANSPORT_HEADER_CALLBACK_SUPPORT    0
 #endif
 
 typedef struct esp_websocket_client *esp_websocket_client_handle_t;
@@ -31,6 +39,9 @@ ESP_EVENT_DECLARE_BASE(WEBSOCKET_EVENTS);         // declaration of the task eve
 typedef enum {
     WEBSOCKET_EVENT_ANY = -1,
     WEBSOCKET_EVENT_ERROR = 0,      /*!< This event occurs when there are any errors during execution */
+#if WS_TRANSPORT_HEADER_CALLBACK_SUPPORT
+    WEBSOCKET_EVENT_HEADER_RECEIVED,/*!< This event occurs for each pre-upgrade HTTP header */
+#endif
     WEBSOCKET_EVENT_CONNECTED,      /*!< Once the Websocket has been connected to the server, no data exchange has been performed */
     WEBSOCKET_EVENT_DISCONNECTED,   /*!< The connection has been disconnected */
     WEBSOCKET_EVENT_DATA,           /*!< When receiving data from the server, possibly multiple portions of the packet */
@@ -104,6 +115,8 @@ typedef struct {
     bool                        disable_auto_reconnect;     /*!< Disable the automatic reconnect function when disconnected */
     bool                        enable_close_reconnect;     /*!< Enable reconnect after server close */
     void                        *user_context;              /*!< HTTP user data context */
+    bool                        task_core_id_set;           /*!< Set to true to use task_core_id. If false, the websocket task uses tskNO_AFFINITY(default) */
+    int                         task_core_id;               /*!< Core ID for the websocket task when task_core_id_set is true. Must be explicitly set by the user, otherwise a zero-initialized config, will pin the task to core 0. Use tskNO_AFFINITY for no pinning. */
     int                         task_prio;                  /*!< Websocket task priority */
     const char                 *task_name;                  /*!< Websocket task name */
     int                         task_stack;                 /*!< Websocket task stack */
@@ -225,6 +238,7 @@ esp_err_t esp_websocket_client_stop(esp_websocket_client_handle_t client);
  *
  *  Notes:
  *  - Cannot be called from the websocket event handler
+ *  - This function cannot be called if `esp_websocket_client_destroy_on_exit` was used for the same handle.
  *
  * @param[in]  client  The client
  *
@@ -237,6 +251,7 @@ esp_err_t esp_websocket_client_destroy(esp_websocket_client_handle_t client);
  *
  *  Notes:
  *  - After event loop finished, client handle would be dangling and should never be used
+ *  - This function is mutually exclusive with `esp_websocket_client_destroy`. Do not call `esp_websocket_client_destroy` manually if this API is used.
  *
  * @param[in]  client      The client
  *

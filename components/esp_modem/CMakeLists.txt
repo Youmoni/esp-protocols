@@ -11,7 +11,12 @@ else()
                       src/esp_modem_uart.cpp
                       src/esp_modem_term_uart.cpp
                       src/esp_modem_netif.cpp)
-    set(dependencies driver esp_event esp_netif)
+    set(dependencies esp_event esp_netif)
+    if("${IDF_VERSION_MAJOR}.${IDF_VERSION_MINOR}" VERSION_GREATER "5.3")
+        list(APPEND dependencies esp_driver_uart)
+    else()
+        list(APPEND dependencies driver)
+    endif()
 endif()
 
 
@@ -34,6 +39,11 @@ set(srcs ${platform_srcs}
         "src/esp_modem_vfs_uart_creator.cpp"
         "src/esp_modem_vfs_socket_creator.cpp"
         "${command_dir}/src/esp_modem_modules.cpp")
+
+if(IDF_BUILD_V2)
+    include(CMakeLists_v2.txt)
+    return()
+endif()
 
 idf_component_register(SRCS "${srcs}"
                     INCLUDE_DIRS include ${command_dir}/include
